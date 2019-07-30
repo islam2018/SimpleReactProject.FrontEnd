@@ -1,0 +1,19 @@
+.profilepic {
+    width:40px;
+    height:40px;
+}
+.title {
+    text-align: left;
+}
+.title2 {
+    text-align: left;
+    color: lightseagreen;
+    font-size: 12px;
+}
+.selected {
+    background-color: #fafafa;
+    border-right: none;
+}
+.lg {
+    border-radius: 0;
+}

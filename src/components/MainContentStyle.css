@@ -1,0 +1,27 @@
+.main {
+    border: solid 1px lightgray;
+    background-color: #fafafa;
+    border-left: none;
+}
+.imgprofile img{
+    display: block;
+    width: 200px;
+    height:  200px;
+    border-radius: 200px;
+    border: 1px solid #dedede;
+}
+.imgprofile input{
+    display: none;
+}
+
+.icon {
+    width: 30%;
+    transition-property: width;
+    transition-duration: 300ms;
+}
+
+.icon:hover {
+    cursor: pointer;
+    width: 35%;
+    opacity: 50%;
+}

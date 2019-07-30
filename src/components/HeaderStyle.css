@@ -1,0 +1,35 @@
+.header {
+    height:60px;
+}
+
+.titre {
+    text-align: left;
+}
+.test {
+    border: solid 1px red;
+}
+
+.uploadPic img {
+    width: 80%;
+    display: inline-block;
+    vertical-align: middle;
+    height: 80%;
+}
+.uploadPic {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    border: solid 1px #dedede;
+    height: 85%;
+    transition-property: transform;
+    transition-duration: 200ms;
+}
+.uploadPic input {
+    display: none;
+}
+.uploadPic:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
