@@ -9,67 +9,13 @@ import UserService from './services/userService'
 class App extends Component {
 
     userService = new UserService();
-    users=[
-        {
-            id:1,
-            firstname:"islam",
-            lastname:"BOUAYACHE1",
-            birthday:"25/11/2019",
-            email:"islammoh2014@outool.fr",
-            phone:"0699415163",
-            company:"company",
-            website:"esi.dz",
-            adress:"alger",
-            city:"kouba",
-            imgpath: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png"
-        },
-        {
-            id:2,
-            firstname:"islam",
-            lastname:"BOUAYACHE2",
-            birthday:"25/11/2019",
-            email:"islammoh2014@outool.fr",
-            phone:"0699415163",
-            company:"company",
-            website:"esi.dz",
-            wilaya:"alger",
-            city:"kouba",
-            imgpath: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png"
-
-        },{
-            id:3,
-            firstname:"islam",
-            lastname:"BOUAYACHE3",
-            birthday:"25/11/2019",
-            email:"islammoh2014@outool.fr",
-            phone:"0699415163",
-            company:"company",
-            website:"esi.dz",
-            adress:"alger",
-            city:"kouba",
-            imgpath: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png"
-
-        },{
-            id:4,
-            firstname:"islam1",
-            lastname:"BOUAYACHE4",
-            birthday:"25/11/2019",
-            email:"islammoh2014@outool.fr",
-            phone:"0699415163",
-            company:"company",
-            website:"esi.dz",
-            adress:"alger",
-            city:"kouba",
-            imgpath: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png"
-
-        },
-    ];
+    users=[];
 
     constructor() {
         super();
-        this.state={
-            users:this.users,
-            currentUser:this.users[0]
+        this.state= {
+            users: [],
+            currentUser: null
         };
 
         this.changeCurrentUser = this.changeCurrentUser.bind(this);
@@ -81,16 +27,17 @@ class App extends Component {
     componentDidMount() {
         console.log("GETTING DATA");
         this.userService.getUsers().then(response=>{
-            /*this.users = response.data;
+            this.users = response.data;
+            console.log(this.users);
             let user=null;
-            if (this.users.size>0) user=this.users[0];
+            if (this.users.length>0) user=this.users[0];
             this.setState({
                 users:this.users,
-                currentUser:this.users[0]
-            });*/
+                currentUser:user
+            });
             console.log(response.data);
         }).catch(e=>{
-
+            console.log(e);
         });
     }
 

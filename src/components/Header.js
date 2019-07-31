@@ -17,7 +17,8 @@ class Header extends Component{
             phone:'',
             adress:'',
             imgpath:upload,
-            file:null
+            file:null,
+            isLoading:false
         };
         this.triggerInputFile=this.triggerInputFile.bind(this);
         this.handleFirstNameChange=this.handleFirstNameChange.bind(this);
@@ -79,12 +80,28 @@ class Header extends Component{
     }
 
     submit() {
-        this.props.onUserCreated(this.state);
-        /*this.userService.newUser(this.state).then(response=>{
-            this.props.onUserCreated(response.data);
-        }).catch(e=>{
+        this.setState({isLoading:true});
+        this.userService.newUser(this.state).then(response=>{
+            if (this.state.file!==null) {
+                let newId = response.data.id;
+                this.userService.uploadPicture(newId,this.state.file).then(res=>{
+                    this.setState({isLoading:false});
+                    this.props.onUserCreated(res.data);
+                    this.closeButton.click();
+                    this.setState({file:null});
+                }).catch (error=>{
+                    console.log(error);
+                });
+            }else {
+                this.setState({isLoading:false});
+                this.closeButton.click();
+                this.setState({file:null});
+                this.props.onUserCreated(response.data);
+            }
 
-        });*/
+        }).catch(e=>{
+            console.log(e);
+        });
         console.log(this.state);
     }
 
@@ -105,7 +122,7 @@ class Header extends Component{
                        </div>
                    </div>
                </div>
-                <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog"
+                <div className="modal fade"   id="exampleModal" tabIndex="-1" role="dialog"
                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
@@ -180,8 +197,20 @@ class Header extends Component{
                                 </form>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                                <button type="button" onClick={this.submit} className="btn btn-primary">Sauvegarder</button>
+                                <button type="button"
+                                        ref={close=> this.closeButton =close}
+                                        className="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                <button type="button" disabled={this.state.isLoading}
+
+                                        onClick={this.submit} className="btn btn-primary">
+                                    {
+                                        this.state.isLoading ? (
+                                            <span className="spinner-border spinner-border-sm" role="status"
+                                                                      aria-hidden="true"/>
+                                        ) : ''
+                                    }
+
+                                    Sauvegarder</button>
                             </div>
                         </div>
                     </div>

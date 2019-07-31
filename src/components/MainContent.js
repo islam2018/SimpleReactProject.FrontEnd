@@ -2,23 +2,28 @@ import React, {Component} from 'react'
 import './MainContentStyle.css'
 import deleteIcon from '../ressources/w.png'
 import saveIcon from '../ressources/success.png'
-
+import UserService from '../services/userService'
 
 class MainContent extends Component{
 
+    userService = new UserService();
+
     constructor(props) {
         super(props);
-        this.state={
-            id:props.user.id,
-            firstname:props.user.firstname,
-            lastname:props.user.lastname,
-            birthday:props.user.birthday,
-            email:props.user.email,
-            phone:props.user.fphone,
-            adress:props.user.adress,
-            imgpath: props.user.imgpath,
-            file:null
-        };
+        if (props.user!==null) {
+            this.state = {
+                id: props.user.id,
+                firstname: props.user.firstname,
+                lastname: props.user.lastname,
+                birthday: props.user.birthday,
+                email: props.user.email,
+                phone: props.user.fphone,
+                adress: props.user.adress,
+                imgpath: props.user.imgpath,
+                file: null,
+                isLoading:false
+            };
+        }
 
         this.triggerInputFile=this.triggerInputFile.bind(this);
         this.handleProfilePicChange=this.handleProfilePicChange.bind(this);
@@ -35,17 +40,20 @@ class MainContent extends Component{
 
     componentWillReceiveProps(props) {
 
-        this.setState({
-            id:props.user.id,
-            firstname:props.user.firstname,
-            lastname:props.user.lastname,
-            birthday:props.user.birthday,
-            email:props.user.email,
-            phone:props.user.phone,
-            adress:props.user.adress,
-            imgpath: props.user.imgpath,
-            file:null
-        });
+        if (props.user!==null) {
+            this.setState({
+                id: props.user.id,
+                firstname: props.user.firstname,
+                lastname: props.user.lastname,
+                birthday: props.user.birthday,
+                email: props.user.email,
+                phone: props.user.phone,
+                adress: props.user.adress,
+                imgpath: props.user.imgpath,
+                file: null,
+                isLoading:false
+            });
+        }
     }
 
     handleProfilePicChange(event) {
@@ -98,19 +106,51 @@ class MainContent extends Component{
     }
 
     submit() {
-        console.log(this.state);
-        this.props.onEditUser(this.state);
+        this.setState({isLoading:true});
+        this.userService.updateUser({
+            id: this.state.id,
+            firstname: this.state.firstname,
+            lastname: this.state.lastname,
+            birthday: this.state.birthday,
+            email: this.state.email,
+            phone: this.state.phone,
+            adress: this.state.adress,
+            imgpath: this.state.imgpath,
+        }).then(response=>{
+            if (this.state.file!==null) {
+                let id = response.data.id;
+                this.userService.uploadPicture(id,this.state.file).then(res=>{
+                    this.setState({isLoading:false});
+                    this.props.onEditUser(res.data);
+                }).catch (error=>{
+                    console.log(error);
+                });
+            }else {
+                this.setState({isLoading:false});
+                this.props.onEditUser(response.data);
+            }
+
+        }).catch(e=>{
+            console.log(e);
+        });
     }
 
+
+
     delete() {
-        console.log(this.state);
-        this.props.onDeleteUser(this.state.id);
+        this.setState({isLoading:true});
+        this.userService.deleteUser(this.state.id).then(r=>{
+            this.setState({isLoading:false});
+            this.props.onDeleteUser(this.state.id);
+        }).catch(e=>{});
     }
 
     render() {
         let user = this.state;
-        return  (
-
+        const defaultPic= "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png";
+        let img = defaultPic;
+        if (user!=null && user.imgpath!=="")  img = user.imgpath ;
+        return  ( user!==null ? (
             <div  className="main min-vh-100">
 
                 <div className="container p-5">
@@ -119,7 +159,7 @@ class MainContent extends Component{
                             <div  className="imgprofile  m-auto" >
                                 <input ref={input => this.inputElement = input}  id="inputFile"
                                        onChange={this.handleProfilePicChange} type="file" />
-                                <img onClick={this.triggerInputFile}  src={user.imgpath}/>
+                                <img onClick={this.triggerInputFile}  src={img}/>
 
                             </div>
 
@@ -128,7 +168,14 @@ class MainContent extends Component{
                             <h2 style={{'textAlign':'left'}}>{user.firstname}</h2>
                             <h2 style={{'textAlign':'left'}}>{user.lastname.toUpperCase()}</h2>
                         </div>
-                        <div className="col-lg-3">
+                        <div className="col-lg-3 m-auto">
+                            {
+                                this.state.isLoading ? (
+                                    <div className="spinner-border" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                ) : ''
+                            }
 
                         </div>
                     </div>
@@ -224,8 +271,8 @@ class MainContent extends Component{
                     </div>
                 </div>
             </div>
-        )
+        ) : '')
     }
 }
 
-export default MainContent
+export default MainContent;

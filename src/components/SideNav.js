@@ -5,11 +5,14 @@ class SideNav extends Component{
 
 
 
+
     constructor(props) {
         super(props);
-        this.state={
-            currentUser:props.currentUser.id
-        };
+        if (props.currentUser!==null) {
+            this.state = {
+                currentUser: props.currentUser.id
+            };
+        }
         console.log(this.props);
 
         this.changeCurrentUser = this.changeCurrentUser.bind(this)
@@ -24,23 +27,28 @@ class SideNav extends Component{
     }
 
     componentWillReceiveProps(nextProps) {
+        if (nextProps.currentUser!==null){
+            this.setState({
+                currentUser:nextProps.currentUser.id
+            });
+        }
 
-        this.setState({
-            currentUser:nextProps.currentUser.id
-        });
     }
 
     render() {
+        if (this.state!==null) {
+            const defaultPic= "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png";
 
-        const users = this.props.users.map(user=>{
-                let active = user.id===this.state.currentUser ? 'selected' : '';
+            const users = this.props.users.map(user => {
+                let active = user.id === this.state.currentUser ? 'selected' : '';
+                let img = user.imgpath === '' ? defaultPic : user.imgpath;
                 return (
-                    <a key={user.id} onClick={()=>this.changeCurrentUser(user.id)}
-                            className={"list-group-item list-group-item-action "+active}>
+                    <a key={user.id} onClick={() => this.changeCurrentUser(user.id)}
+                       className={"list-group-item list-group-item-action " + active}>
                         <div className="container">
                             <div className="row">
                                 <div className="col-xl-2">
-                                    <img className="profilepic" src={user.imgpath}/>
+                                    <img className="profilepic" src={img}/>
                                 </div>
                                 <div className="col-xl-7 offset-1 m-auto">
                                     <h6 className="title m-auto">{user.firstname} {user.lastname}</h6>
@@ -53,13 +61,14 @@ class SideNav extends Component{
                         </div>
                     </a>
                 )
-        });
+            });
 
-        return (
-            <div className="list-group">
-                {users}
-            </div>
-        )
+            return (
+                <div className="list-group">
+                    {users}
+                </div>
+            )
+        }else return('')
     }
 }
 
